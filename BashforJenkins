@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo "Cloning the Repository"
+mkdir app
+cd app
+git pull https://github.com/koushikpr/CI-CD-Pipeline-for-Flask-App-Using-Git-and-Jenkins
+
+echo "Cloned Successfully"
+
+echo "--------------------------------------------------"
+
+echo "Installing Terraform"
+
+sudo yum install -y yum-utils shadow-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+
+echo "Launching AWS EC2 Instances Using Terraform"
+
+cd Terraform
+
+terraform init
+terraform plan
+terraform apply -auto-approve
+
+echo "Successfully Created AWS EC2 Instance"
+
