@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind : Deployment
+metadata:
+  name : mongodb-pod
+  labels:
+    app : mongodb-pod
+    type : db
+spec :
+  replicas: 2
+  selector:
+     matchLabels:
+       app : mongodb-pod
+       type : db
+  template:
+   metadata:
+    name : mongodb-pod
+    labels:
+     app : mongodb-pod
+     type : db
+   spec :
+    containers:
+      - name: mongodb-pod
+        image: mongo
+
+---
+#service must be same as host spring.data.mongodb.host=mongo-db
+apiVersion: v1
+kind : Service
+metadata :
+  name : mongo-db
+  labels:
+    app : mongo-db-service
+  
+spec :
+  type : ClusterIP
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort : 27017
+  selector:
+    app : mongodb-pod
+    type : db
+
+
+       
+  

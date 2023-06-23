@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasksapp
+  labels:
+    app: tasksapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasksapp
+  template:
+    metadata:
+      labels:
+        app: tasksapp
+    spec:
+      containers:
+        - name: tasksapp
+          image: 030902/flaskv4
+          ports:
+            - containerPort: 5000
+          imagePullPolicy: IfNotPresent
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-service
+spec:
+  selector:
+    app: flask-app-deployment
+  ports:
+  - port: 6000
+    targetPort: 5000
+    nodePort: 31110
+    protocol: TCP
+  type: NodePort
