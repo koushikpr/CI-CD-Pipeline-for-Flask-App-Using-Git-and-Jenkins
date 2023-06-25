@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    environment {
+        registry = "030902/flaskapp1"
+        registryCredential = 'dockerhub_id'
+        dockerImage = ''
+    }
     stages {
         stage("Pull Repository") {
             steps {
@@ -8,28 +13,26 @@ pipeline {
         }
         stage("Build the DockerImage") {
             steps {
-                bat 'docker build . -t 030902/flaskaaa'
+                script {
+                    dockerImage = docker.build registry 
+                }
             }
         }
         stage("Start the Container") {
             steps {
-                bat 'docker compose up -d'
+                sh 'docker-compose up -d'
             }
         }
-        stage("Push Container to DockerHub") {
+        stage("Push the Container") {
             steps {
-                bat 'docker push 030902/flaskaaa'
+                script {
+                    docker.withRegistry( 'https://registry.hub.docker.com' , registryCredential) {
+                        dockerImage.push("latest")
+                    }
+                }
             }
         }
-        stage("Add Kubernetes files") {
-            steps {
-                bat 'kubectl apply -f Kubernetes/.'
-            }
-        }
-        stage("Check all Container Status") {
-            steps {
-                bat 'kubectl get all'
-            }
-        }
+       
+        
     }
 }
